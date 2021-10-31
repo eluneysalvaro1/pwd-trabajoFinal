@@ -1,57 +1,91 @@
 <?php
 
-class rol{
+class menu{
 
-    private $idRol; 
-    private $rolDescripcion; 
+    private $idMenu; 
+    private $meNombre; 
+    private $meDescripcion;
+    private $idPadre;
+    private $meDeshabilitado;  
     private $mensajeOperacion; 
 
+
     public function __construct(){
-        $this->idRol = 0;
-        $this->rolDescripcion = '';
-    }
-// METODOS SETTERS
-    public function setear($datos){
-        $this->setIdRol($datos['idRol']);
-        $this->setRolDescripcion($datos['rolDescripcion']);
+        $this->idMenu = 0;
+        $this->meNombre = '';
+        $this->meDescripcion = '';
+        $this->idPadre = '';
+        $this->meDeshabilitado = '';
+        $this->mensajeOperacion = ''; 
     }
 
-    public function setIdRol($idRol){
-        $this->idRol = $idRol;
+
+    public function setear($datos){
+        $this->setIdMenu($datos['idmenu']);
+        $this->setMeNombre($datos['menombre']);
+        $this->setMeDescripcion($datos['medescripcion']);
+        $this->setIdPadre($datos['idpadre']);
+        $this->setMeDeshabilitado($datos['medeshabilitado']);
     }
-    public function setRolDescripcion($rolDescripcion){
-        $this->rolDescripcion = $rolDescripcion;
+
+    public function getIdMenu(){
+        return $this->idMenu;
+    }
+    public function setIdMenu($idMenu){
+        $this->idMenu = $idMenu;
+    }
+    public function getMeNombre(){
+        return $this->meNombre;
+    }
+    public function setMeNombre($meNombre){
+        $this->meNombre = $meNombre;
+    }
+    public function getMeDescripcion(){
+        return $this->meDescripcion;
+    }
+    public function setMeDescripcion($meDescripcion){
+        $this->meDescripcion = $meDescripcion;
+    }
+    public function getIdPadre(){
+        return $this->idPadre;
+    }
+    public function setIdPadre($idPadre){
+        $this->idPadre = $idPadre;
+    }
+    public function getMeDeshabilitado(){
+        return $this->meDeshabilitado;
+    }
+    public function setMeDeshabilitado($meDeshabilitado){
+        $this->meDeshabilitado = $meDeshabilitado;
     }
     public function setMensajeOperacion($mensajeOperacion){
         $this->mensajeOperacion = $mensajeOperacion;
     }
-    
-    // METODOS GETTERS
-    public function getRolDescripcion(){
-        return $this->rolDescripcion;
-    }
-
-    public function getIdRol(){
-        return $this->idRol;
-    }
-
     public function getMensajeOperacion(){
         return $this->mensajeOperacion;
     }
 
-    
+
+
 // CONSULTAS A LA BASE DE DATOS
     public function cargar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol=$this->getIdRol();
-        $sql="SELECT * FROM rol WHERE idRol = '$idRol'";
+        $idMenu = $this->getIdMenu();
+        $sql = "SELECT * FROM menu WHERE idmenu = '$idMenu'";
         if ($base->Iniciar()) {
             $res = $base->Ejecutar($sql);
             if($res>-1){
                 if($res>0){
                     $row = $base->Registro();
-                    $this->setear([$row['idRol'],$row['rolDescripcion']]);
+                    $datos = [
+                        $row['idmenu'], 
+                        $row['menombre'],
+                        $row['medescripcion'],
+                        $row['idpadre'],
+                        $row['medeshabilitado']
+                    ];
+                    $this->setear($datos);
                 }
             }
         } else {
@@ -60,8 +94,7 @@ class rol{
         return $resp;
     }
 
-    public function listar($parametro = "")
-    {
+    public function listar($parametro = ""){
         $arreglo = array();
         $base = new BaseDatos();
         $sql = "SELECT * FROM rol ";
@@ -71,10 +104,16 @@ class rol{
         $res = $base->Ejecutar($sql);
         if ($res > -1) {
             if ($res > 0) {
-
                 while ($row = $base->Registro()) {
-                    $obj = new rol();
-                    $obj->setear(['idRol'=>$row['idRol'], 'rolDescripcion'=>$row['rolDescripcion']]);
+                    $obj = new menu();
+                    $datos = [
+                        $row['idmenu'], 
+                        $row['menombre'],
+                        $row['medescripcion'],
+                        $row['idpadre'],
+                        $row['medeshabilitado']
+                    ];
+                    $obj->setear($datos);
                     array_push($arreglo, $obj);
                 }
             }
@@ -85,66 +124,72 @@ class rol{
         return $arreglo;
     }
 
-    public function insertar()
-    {
+    public function insertar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol=$this->getIdRol();
-        $rolDescripcion=$this->getRolDescripcion();
-        $sql = "INSERT INTO rol(rolDescripcion) VALUES('$rolDescripcion')";
+
+        $meNombre = $this->getMeNombre();
+        $meDescripcion = $this->getMeDescripcion();
+        $idPadre = $this->getIdPadre();
+        $meDeshabilitado = $this->getMeDeshabilitado(); 
+
+        $sql = "INSERT INTO menu(menombre,medescripcion,idpadre,medeshabilitado) 
+                VALUES('$meNombre' , '$meDescripcion' , '$idPadre' , '$meDeshabilitado')";
         if ($base->Iniciar()) {
-            if ($idRol = $base->Ejecutar($sql)) {
-                $this->setIdRol($idRol);
+            if ($idMenu = $base->Ejecutar($sql)) {
+                $this->setIdMenu($idMenu);
                 $resp = true;
             } else {
-                $this->setmensajeoperacion("rol->insertar: " . $base->getError());
+                $this->setmensajeoperacion("menu->insertar: " . $base->getError());
                 $resp = false;
             }
         } else {
-            $this->setmensajeoperacion("rol->insertar: " . $base->getError());
+            $this->setmensajeoperacion("menu->insertar: " . $base->getError());
             $resp = false;
         }
         return $resp;
     }
 
-    public function modificar()
-    {
+    public function modificar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol=$this->getIdRol();
-        $rolDescripcion=$this->getRolDescripcion();
-        $sql = "UPDATE  SET rolDescripcion ='$rolDescripcion' WHERE idRol='$idRol'";
+
+        $idMenu = $this->getIdMenu();
+
+        $meNombre = $this->getMeNombre();
+        $meDescripcion = $this->getMeDescripcion();
+        $idPadre = $this->getIdPadre();
+        $meDeshabilitado = $this->getMeDeshabilitado();
+
+        $sql = "UPDATE menu SET menombre ='$meNombre' , medescripcion = '$meDescripcion' , idpadre = '$idPadre' , medeshabilitado = '$meDeshabilitado' 
+                WHERE idmenu = '$idMenu'";
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 $resp = true;
             } else {
-                $this->setmensajeoperacion("Rol->modificar: " . $base->getError());
+                $this->setmensajeoperacion("menu->modificar: " . $base->getError());
             }
         } else {
-            $this->setmensajeoperacion("Rol->modificar: " . $base->getError());
+            $this->setmensajeoperacion("menu->modificar: " . $base->getError());
         }
         return $resp;
     }
-
-    public function eliminar()
-    {
+    public function eliminar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol=$this->getIdRol();
-        $sql = "DELETE FROM rol WHERE idRol='$idRol'";
+        $idMenu = $this->getIdMenu();
+        $sql = "DELETE * FROM menu WHERE idMenu='$idMenu'";
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 return true;
             } else {
-                $this->setmensajeoperacion("Rol->eliminar: " . $base->getError());
+                $this->setmensajeoperacion("menu->eliminar: " . $base->getError());
             }
         } else {
-            $this->setmensajeoperacion("Rol->eliminar: " . $base->getError());
+            $this->setmensajeoperacion("menu->eliminar: " . $base->getError());
         }
         return $resp;
     }
-
-
 }
 
 ?>

@@ -6,7 +6,7 @@ class usuario
     private $usNombre;
     private $usPass;
     private $usMail;
-    private $usDesabilitado;
+    private $usDeshabilitado;
     private $mensajeOperacion;
 
     public function __construct(){
@@ -14,17 +14,16 @@ class usuario
         $this->usNombre = '';
         $this->usPass = '';
         $this->usMail = '';
-        $this->usDesabilitado = '';
+        $this->usDeshabilitado = '';
         $this->mensajeOperacion = '';
     }
     public function setear($datos){
-        $this->setIdUsuario($datos['idUsuario']);
-        $this->setUsNombre($datos['usNombre']);
-        $this->setUsPass($datos['usPass']);
-        $this->setUsMail($datos['usMail']);
-        $this->setUsDesabilitado($datos['usDesabilitado']);
+        $this->setIdUsuario($datos['idusuario']);
+        $this->setUsNombre($datos['usnombre']);
+        $this->setUsPass($datos['uspass']);
+        $this->setUsMail($datos['usmail']);
+        $this->setUsDeshabilitado($datos['usdeshabilitado']);
     }
-
 
     public function setIdUsuario($idUsuario){
         $this->idUsuario = $idUsuario;
@@ -38,8 +37,8 @@ class usuario
     public function setUsMail($usMail){
         $this->usMail = $usMail;
     }
-    public function setUsDesabilitado($usDesabilitado){
-        $this->usDesabilitado = $usDesabilitado;
+    public function setUsDeshabilitado($usDeshabilitado){
+        $this->usDeshabilitado = $usDeshabilitado;
     }
     public function setMensajeOperacion($mensajeOperacion){
         $this->mensajeOperacion = $mensajeOperacion;
@@ -56,8 +55,8 @@ class usuario
     public function getUsMail(){
         return $this->usMail;
     }
-    public function getUsDesabilitado(){
-        return $this->usDesabilitado;
+    public function getUsDeshabilitado(){
+        return $this->usDeshabilitado;
     }
     public function getMensajeOperacion(){
         return $this->mensajeOperacion;
@@ -74,7 +73,8 @@ class usuario
             if ($res > -1) {
                 if ($res > 0) {
                     $row = $base->Registro();
-                    $this->setear(['idUsuario' => $row['idUsuario'], 'usNombre' => $row['usNombre'], 'usPass' => $row['usPass'], 'usMail' => $row['usMail'], 'usDesabilitado' => $row['usDesabilitado']]);
+                    $this->setear(['idusuario' => $row['idusuario'],
+                    'usnombre' => $row['usnombre'], 'uspass' => $row['uspass'], 'usmail' => $row['usmail'], 'usdesabilitado' => $row['usdesabilitado']]);
                 }
             }
         } else {
@@ -95,7 +95,7 @@ class usuario
             if ($res >= 0) {
                 while ($row = $base->Registro()) {
                     $obj = new usuario();
-                    $obj->setear(['idUsuario' => $row['idUsuario'], 'usNombre' => $row['usNombre'], 'usPass' => $row['usPass'], 'usMail' => $row['usMail'], 'usDesabilitado' => $row['usDesabilitado']]);
+                    $obj->setear(['idusuario' => $row['idusuario'], 'usnombre' => $row['usnombre'], 'uspass' => $row['uspass'], 'usmail' => $row['usmail'], 'usdeshabilitado' => $row['usdeshabilitado']]);
                     array_push($arreglo, $obj);
                 }
             }
@@ -111,7 +111,7 @@ class usuario
         $usNombre = $this->getUsNombre();
         $usPass = $this->getUsPass();
         $usMail = $this->getUsMail();
-        $usDeshabilitado = $this->getUsDesabilitado();
+        $usDeshabilitado = $this->getUsDeshabilitado();
         $sql = "INSERT INTO usuario(idusuario,usnombre, uspass, usmail, usdeshabilitado)
                 VALUES ('$idUsuario','$usNombre', '$usPass', '$usMail', '$usDeshabilitado')";
 
@@ -138,7 +138,7 @@ class usuario
         $usNombre = $this->getUsNombre();
         $usPass = $this->getUsPass();
         $usMail = $this->getUsMail();
-        $usDeshabilitado = $this->getUsDesabilitado();
+        $usDeshabilitado = $this->getUsDeshabilitado();
         $sql = "UPDATE usuario SET usmombre = '$usNombre', uspass = '$usPass'
         , usmail = '$usMail', usdeshabilitado = '$usDeshabilitado' WHERE idusuario = '$idUsuario'";
         if ($base->Iniciar()) {
@@ -158,7 +158,7 @@ class usuario
         $resp = false;
         $idUsuario = $this->getIdUsuario();
         if ($base->Iniciar()) {
-            $sql = "DELETE FROM usuario WHERE idusuario = '$idUsuario'";
+            $sql = "DELETE * FROM usuario WHERE idusuario = '$idUsuario'";
             if ($base->Ejecutar($sql)) {
                 $resp =  true;
             } else {

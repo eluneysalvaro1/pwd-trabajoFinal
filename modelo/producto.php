@@ -18,10 +18,10 @@ class producto{
     }
 
     public function setear($datos){
-        $this->setIdProducto($datos['idProducto']);
-        $this->setProNombre($datos['proNombre']);
-        $this->setProDetalle($datos['proDetalle']);
-        $this->setProCantStock($datos['proCantStock']);
+        $this->setIdProducto($datos['idproducto']);
+        $this->setProNombre($datos['pronombre']);
+        $this->setProDetalle($datos['prodetalle']);
+        $this->setProCantStock($datos['procantstock']);
         $this->setPrecio($datos['precio']);
     }
 
@@ -75,10 +75,10 @@ class producto{
             if($res>0){
                 $row = $base->Registro();
                 $datos = [
-                    $row['idProducto'],
-                    $row['proNombre'],
-                    $row['proDetalle'],
-                    $row['proCantStock'],
+                    $row['idproducto'],
+                    $row['pronombre'],
+                    $row['prodetalle'],
+                    $row['procantstock'],
                     $row['precio']
                 ]; 
                 $this->setear($datos);
@@ -104,10 +104,10 @@ class producto{
             while ($row = $base->Registro()) {
                 $obj = new producto();
                 $datos = [
-                    $row['idProducto'],
-                    $row['proNombre'],
-                    $row['proDetalle'],
-                    $row['proCantStock'],
+                    $row['idproducto'],
+                    $row['pronombre'],
+                    $row['prodetalle'],
+                    $row['procantstock'],
                     $row['precio']
                 ]; 
                 $obj->setear($datos);
@@ -174,7 +174,7 @@ public function eliminar()
     $resp = false;
     $base = new BaseDatos();
     $idProducto = $this->getIdProducto();
-    $sql = "DELETE FROM producto WHERE idproducto='$idProducto'";
+    $sql = "DELETE * FROM producto WHERE idproducto='$idProducto'";
     if ($base->Iniciar()) {
         if ($base->Ejecutar($sql)) {
             return true;
