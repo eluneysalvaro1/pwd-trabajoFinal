@@ -78,18 +78,20 @@ class menu{
             if($res>-1){
                 if($res>0){
                     $row = $base->Registro();
+                    $objMenu = new menu();
+                    $oMenu = $objMenu->getIdMenu($row['idmenu']);                     
                     $datos = [
                         $row['idmenu'], 
                         $row['menombre'],
                         $row['medescripcion'],
-                        $row['idpadre'],
+                        $oMenu,
                         $row['medeshabilitado']
                     ];
                     $this->setear($datos);
                 }
             }
         } else {
-            $this->setMensajeoperacion("Rol->cargar: ".$base->getError());
+            $this->setMensajeoperacion("menu->cargar: ".$base->getError());
         }
         return $resp;
     }
@@ -97,7 +99,7 @@ class menu{
     public function listar($parametro = ""){
         $arreglo = array();
         $base = new BaseDatos();
-        $sql = "SELECT * FROM rol ";
+        $sql = "SELECT * FROM menu ";
         if ($parametro != "") {
             $sql .= 'WHERE ' . $parametro;
         }
@@ -106,11 +108,13 @@ class menu{
             if ($res > 0) {
                 while ($row = $base->Registro()) {
                     $obj = new menu();
+                    $objMenu = new menu();
+                    $oMenu = $objMenu->getIdMenu($row['idmenu']); 
                     $datos = [
                         $row['idmenu'], 
                         $row['menombre'],
                         $row['medescripcion'],
-                        $row['idpadre'],
+                        $oMenu,
                         $row['medeshabilitado']
                     ];
                     $obj->setear($datos);
@@ -118,7 +122,7 @@ class menu{
                 }
             }
         } else {
-            $this->setMensajeoperacion("rol->Listar: ".$base->getError());
+            $this->setMensajeoperacion("menu->Listar: ".$base->getError());
         }
 
         return $arreglo;
@@ -130,7 +134,8 @@ class menu{
 
         $meNombre = $this->getMeNombre();
         $meDescripcion = $this->getMeDescripcion();
-        $idPadre = $this->getIdPadre();
+        //ID PADRE ENREALIDAD ES UN MENU AL CUAL TENGO QUE ACCEDERLE A SU ID
+        $idPadre = $this->getIdPadre()->getIdMenu();
         $meDeshabilitado = $this->getMeDeshabilitado(); 
 
         $sql = "INSERT INTO menu(menombre,medescripcion,idpadre,medeshabilitado) 
@@ -158,10 +163,11 @@ class menu{
 
         $meNombre = $this->getMeNombre();
         $meDescripcion = $this->getMeDescripcion();
-        $idPadre = $this->getIdPadre();
+        $idPadre = $this->getIdPadre()->getIdMenu();
         $meDeshabilitado = $this->getMeDeshabilitado();
 
-        $sql = "UPDATE menu SET menombre ='$meNombre' , medescripcion = '$meDescripcion' , idpadre = '$idPadre' , medeshabilitado = '$meDeshabilitado' 
+        $sql = "UPDATE menu 
+                SET menombre ='$meNombre' , medescripcion = '$meDescripcion' , idpadre = '$idPadre' , medeshabilitado = '$meDeshabilitado' 
                 WHERE idmenu = '$idMenu'";
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {

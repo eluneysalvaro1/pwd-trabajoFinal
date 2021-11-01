@@ -1,36 +1,36 @@
 <?php
 
-class rol{
+class menuRol{
 
-    private $idRol; 
-    private $idMenu; 
+    private $objRol; 
+    private $objMenu; 
     private $mensajeOperacion; 
 
     public function __construct(){
-        $this->idRol = 0;
-        $this->idMenu = 0;
+        $this->objRol = null;
+        $this->objMenu = null;
         $this->mensajeOperacion = '';
     }
 
 
     public function setear($datos){
-        $this->setIdRol($datos['idmenu']);
-        $this->setRolDescripcion($datos['idrol']);
+        $this->setObjMenu($datos['objmenu']);
+        $this->setObjRol($datos['objrol']);
     }
-    public function setIdRol($idRol){
-        $this->idRol = $idRol;
+    public function getObjMenu(){
+        return $this->objMenu;
+    }
+    public function setObjMenu($objMenu){
+        $this->objMenu = $objMenu;
+    }
+    public function getObjRol(){
+        return $this->objRol;
+    }
+    public function setObjRol($objRol){
+        $this->objRol = $objRol;
     }
     public function setMensajeOperacion($mensajeOperacion){
         $this->mensajeOperacion = $mensajeOperacion;
-    }
-    public function getIdMenu(){
-        return $this->idMenu;
-    }
-    public function setIdMenu($idMenu){
-        $this->idMenu = $idMenu;
-    }
-    public function getIdRol(){
-        return $this->idRol;
     }
     public function getMensajeOperacion(){
         return $this->mensajeOperacion;
@@ -41,8 +41,8 @@ class rol{
     public function cargar(){
         $resp = false;
         $base = new BaseDatos();
-        $idMenu = $this->getIdMenu();
-        $idRol = $this->getIdRol(); 
+        $idMenu = $this->getObjMenu()->getIdMenu();
+        $idRol = $this->getObjRol()->getIdRol(); 
         $sql = "SELECT * FROM menurol WHERE idmenu = '$idMenu' AND idrol = '$idRol'";
         if ($base->Iniciar()) {
             $res = $base->Ejecutar($sql);
@@ -69,8 +69,16 @@ class rol{
         if ($res > -1) {
             if ($res > 0) {
                 while ($row = $base->Registro()) {
-                    $obj = new rol();
-                    $obj->setear(['idmenu'=>$row['idmenu'], 'idrol'=>$row['idrol']]);
+                    $obj = new menuRol();
+                    $objMenu = new menu();
+                    $objRol = new rol(); 
+                    $oMenu = $objMenu->listar($row['idmenu']);
+                    $oRol = $objRol->listar($row['idrol']);
+                    $datos = [
+                        "objmenu" => $oMenu,
+                        "objrol" => $oRol 
+                    ]; 
+                    $obj->setear($datos);
                     array_push($arreglo, $obj);
                 }
             }
@@ -83,12 +91,12 @@ class rol{
     public function insertar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol=$this->getIdRol();
-        $idMenu = $this->getIdMenu();
+        $idRol = $this->getObjRol()->getIdRol();
+        $idMenu = $this->getObjMenu()->getIdMenu();
         $sql = "INSERT INTO menurol(idmenu , idrol) VALUES('$idMenu' , '$idRol' )";
         if ($base->Iniciar()) {
-            if ($idRol = $base->Ejecutar($sql)) {
-                $this->setIdRol($idRol);
+            if ($idMenuRol = $base->Ejecutar($sql)) {
+                // $this->setIdRol($idRol);
                 $resp = true;
             } else {
                 $this->setmensajeoperacion("menurol->insertar: " . $base->getError());
@@ -104,8 +112,8 @@ class rol{
     public function modificar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol = $this->getIdRol();
-        $idMenu = $this->getIdMenu();
+        $idRol = $this->getObjRol()->getIdRol();
+        $idMenu = $this->getObjMenu()->getIdMenu();
         $sql = "UPDATE menurol SET idmenu ='$idMenu' , idrol = '$idRol' WHERE idmenu = '$idMenu' AND idrol = '$idRol' ";
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -122,8 +130,8 @@ class rol{
     public function eliminar(){
         $resp = false;
         $base = new BaseDatos();
-        $idRol = $this->getIdRol();
-        $idMenu = $this->getIdMenu();
+        $idRol = $this->getObjRol()->getIdRol();
+        $idMenu = $this->getObjMenu()->getIdMenu();
         $sql = "DELETE * FROM menurol WHERE idmenu = '$idMenu' AND idrol = '$idRol' ";
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -136,6 +144,12 @@ class rol{
         }
         return $resp;
     }
+
+
+    
+
+
+    
 
 
     
