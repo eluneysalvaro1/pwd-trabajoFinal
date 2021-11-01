@@ -83,7 +83,7 @@ class usuario
         return $resp;
     }
 
-    public function listar($parametro = ""){
+    public static function listar($parametro = ""){
         $arreglo = array();
         $base = new BaseDatos();
         $sql = "SELECT * FROM usuario ";
@@ -130,8 +130,7 @@ class usuario
     }
 
 
-    public function modificar()
-    {
+    public function modificar(){
         $resp = false;
         $base = new BaseDatos();
         $idUsuario = $this->getIdUsuario();
